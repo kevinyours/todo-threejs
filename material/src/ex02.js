@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: MeshBasicMaterial
+// ----- 주제: MeshLambertMaterial / MeshPhongMaterial
 
 export default function example() {
   // Renderer
@@ -28,18 +28,22 @@ export default function example() {
   scene.add(camera);
 
   // Light
-  // MeshBasicMaterial 은 조명 필요 없음
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
   // Mesh
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({
+  const material1 = new THREE.MeshLambertMaterial({
     color: "seagreen",
   });
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  const material2 = new THREE.MeshPhongMaterial({
+    color: "seagreen",
+  });
+  const mesh1 = new THREE.Mesh(geometry, material1);
+  const mesh2 = new THREE.Mesh(geometry, material2);
+
+  scene.add(mesh1, mesh2);
 
   // 그리기
   const clock = new THREE.Clock();
