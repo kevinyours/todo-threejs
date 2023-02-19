@@ -1,9 +1,34 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: MeshLambertMaterial / MeshPhongMaterial
+// ----- 주제: MeshNormalMaterial (법선)
+
+/**
+ * Vertex: 점
+ * Edge: 선
+ * Face: 면
+ */
 
 export default function example() {
+  // 텍스처 이미지 로드
+  const loadingManage = new THREE.LoadingManager();
+  loadingManage.onStart = () => {
+    console.log("로드 시작");
+  };
+  loadingManage.onProgress = (img) => {
+    console.log(img + " 로드");
+  };
+  loadingManage.onLoad = () => {
+    console.log("로드 완료");
+  };
+  loadingManage.onError = () => {
+    console.log("에러");
+  };
+
+  const textureLoader = new THREE.TextureLoader();
+  const gradientTex = textureLoader.load("/textures/gradient.png");
+  gradientTex.magFilter = THREE.NearestFilter;
+
   // Renderer
   const canvas = document.querySelector("#three-canvas");
   const renderer = new THREE.WebGLRenderer({
@@ -15,7 +40,6 @@ export default function example() {
 
   // Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("white");
 
   // Camera
   const camera = new THREE.PerspectiveCamera(
@@ -31,7 +55,7 @@ export default function example() {
   // Light
   const ambientLight = new THREE.AmbientLight("white", 0.5);
   const directionalLight = new THREE.DirectionalLight("white", 1);
-  directionalLight.position.set(1, 0, 2);
+  directionalLight.position.set(1, 1, 2);
   scene.add(ambientLight);
   scene.add(directionalLight);
 
@@ -39,26 +63,14 @@ export default function example() {
   const controls = new OrbitControls(camera, renderer.domElement);
 
   // Mesh
-  const geometry = new THREE.SphereGeometry(1, 16, 16);
-  const material1 = new THREE.MeshLambertMaterial({
-    color: "orange",
-  });
-  const material2 = new THREE.MeshPhongMaterial({
-    color: "seagreen",
-    shininess: 1000,
-  });
-  const mesh1 = new THREE.Mesh(geometry, material1);
-  const mesh2 = new THREE.Mesh(geometry, material2);
-  mesh1.position.x = -1.5;
-  mesh2.position.x = 1.5;
-  scene.add(mesh1, mesh2);
+  // const geometry = new THREE.ConeGeometry(1, 2, 128);
+  const geometry = new THREE.SphereGeometry(1, 64, 64);
+  const material = new THREE.MeshNormalMaterial();
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
 
   // 그리기
-  const clock = new THREE.Clock();
-
   function draw() {
-    const delta = clock.getDelta();
-
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
   }

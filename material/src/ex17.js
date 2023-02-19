@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: MeshLambertMaterial / MeshPhongMaterial
+// ----- 주제: MeshBasicMaterial
 
 export default function example() {
   // Renderer
@@ -15,7 +15,6 @@ export default function example() {
 
   // Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("white");
 
   // Camera
   const camera = new THREE.PerspectiveCamera(
@@ -29,35 +28,40 @@ export default function example() {
   scene.add(camera);
 
   // Light
-  const ambientLight = new THREE.AmbientLight("white", 0.5);
-  const directionalLight = new THREE.DirectionalLight("white", 1);
-  directionalLight.position.set(1, 0, 2);
-  scene.add(ambientLight);
-  scene.add(directionalLight);
+  // MeshBasicMaterial 은 조명 필요 없음
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
+  // CanvasTexture
+  const textCanvas = document.createElement("canvas");
+  const textContext = textCanvas.getContext("2d");
+  textCanvas.width = 500;
+  textCanvas.height = 500;
+  const canvasTexture = new THREE.CanvasTexture(textCanvas);
+
   // Mesh
-  const geometry = new THREE.SphereGeometry(1, 16, 16);
-  const material1 = new THREE.MeshLambertMaterial({
-    color: "orange",
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({
+    map: canvasTexture,
   });
-  const material2 = new THREE.MeshPhongMaterial({
-    color: "seagreen",
-    shininess: 1000,
-  });
-  const mesh1 = new THREE.Mesh(geometry, material1);
-  const mesh2 = new THREE.Mesh(geometry, material2);
-  mesh1.position.x = -1.5;
-  mesh2.position.x = 1.5;
-  scene.add(mesh1, mesh2);
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
 
   // 그리기
   const clock = new THREE.Clock();
 
   function draw() {
-    const delta = clock.getDelta();
+    const time = clock.getElapsedTime();
+
+    material.map.needsUpdate = true;
+
+    textContext.fillStyle = "green";
+    textContext.fillRect(0, 0, 500, 500);
+    textContext.fillStyle = "white";
+    textContext.fillRect(time * 50, 100, 50, 50);
+    textContext.font = "bold 50px sans-serif";
+    textContext.fillText("1분코딩", 200, 200);
 
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);

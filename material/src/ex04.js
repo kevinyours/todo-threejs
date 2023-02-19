@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: MeshLambertMaterial / MeshPhongMaterial
+// 각지게 표현하기
 
 export default function example() {
   // Renderer
@@ -40,12 +40,16 @@ export default function example() {
 
   // Mesh
   const geometry = new THREE.SphereGeometry(1, 16, 16);
-  const material1 = new THREE.MeshLambertMaterial({
-    color: "orange",
-  });
-  const material2 = new THREE.MeshPhongMaterial({
+  const material1 = new THREE.MeshPhongMaterial({
     color: "seagreen",
-    shininess: 1000,
+    shininess: 800, // 표면효과 (맨질맨질...)
+    flatShading: true, // 각지게 표현하기
+  });
+  const material2 = new THREE.MeshStandardMaterial({
+    color: "seagreen",
+    roughness: 0.3, // 표면효과 (맨질맨질...)
+    metalness: 0.3, // 금속성
+    flatShading: true, // 각지게 표현하기
   });
   const mesh1 = new THREE.Mesh(geometry, material1);
   const mesh2 = new THREE.Mesh(geometry, material2);
