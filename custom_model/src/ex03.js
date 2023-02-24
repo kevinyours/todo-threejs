@@ -42,17 +42,18 @@ export default function example() {
 
   // gltf loader
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load("/models/ilbuni.glb", (gltf) => {
-    // console.log(gltf.scene.children[0]);
-    const ilbuniMesh = gltf.scene.children[0];
-    scene.add(ilbuniMesh);
+
+  gltfLoader.load("/models/sun.glb", (gltf) => {
+    console.log(gltf);
+    const sunMesh = gltf.scene.children[0];
+    scene.add(sunMesh);
   });
 
   // 그리기
   const clock = new THREE.Clock();
 
   function draw() {
-    const delta = clock.getDelta();
+    const delta = clock.getDelta(); // draw 함수 실행간격을 시간으로 가지고 있는 변수
 
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);

@@ -42,17 +42,29 @@ export default function example() {
 
   // gltf loader
   const gltfLoader = new GLTFLoader();
+  let mixer;
+
   gltfLoader.load("/models/ilbuni.glb", (gltf) => {
     // console.log(gltf.scene.children[0]);
     const ilbuniMesh = gltf.scene.children[0];
     scene.add(ilbuniMesh);
+
+    mixer = new THREE.AnimationMixer(ilbuniMesh);
+    const actions = [];
+    actions[0] = mixer.clipAction(gltf.animations[0]);
+    actions[1] = mixer.clipAction(gltf.animations[1]);
+    actions[0].repetitions = 2;
+    actions[0].clampWhenFinished = true; // 애니메이션 마지막 프레임에 멈춰줌
+    actions[0].play();
   });
 
   // 그리기
   const clock = new THREE.Clock();
 
   function draw() {
-    const delta = clock.getDelta();
+    const delta = clock.getDelta(); // draw 함수 실행간격을 시간으로 가지고 있는 변수
+
+    if (mixer) mixer.update(delta);
 
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
