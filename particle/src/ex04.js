@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: 기본 Geometry 파티클
+// ----- 주제: 여러가지 색의 파티클
 
 export default function example() {
   // Renderer
@@ -41,15 +41,36 @@ export default function example() {
   controls.enableDamping = true;
 
   // Mesh
-  //   const geometry = new THREE.SphereGeometry(1, 32, 32);
-  const geometry = new THREE.BoxGeometry(2, 2, 2);
+  const geometry = new THREE.BufferGeometry();
+  const count = 1000; // particle 갯수
+  const postions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+
+  for (let i = 0; i < postions.length; i++) {
+    postions[i] = (Math.random() - 0.5) * 10;
+    colors[i] = Math.random();
+  }
+
+  // 1개의 Vertex (정점)을 위해 값 3개 필요
+  geometry.setAttribute("position", new THREE.BufferAttribute(postions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+  // 이미지 로드
+  const textureLoader = new THREE.TextureLoader();
+  const particleTexture = textureLoader.load("/images/star.png");
+
   const material = new THREE.PointsMaterial({
-    size: 0.02,
-    // size: 1, // particle 크기
-    // sizeAttenuation: false, // 원근에 상관없이 size 균일하게 조정
+    size: 0.3,
+    map: particleTexture,
+    // 파티클 이미지를 투명하게 세팅
+    transparent: true,
+    alphaMap: particleTexture,
+    depthWrite: false,
+    vertexColors: true,
   });
-  const points = new THREE.Points(geometry, material);
-  scene.add(points);
+
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
 
   // 그리기
   const clock = new THREE.Clock();
